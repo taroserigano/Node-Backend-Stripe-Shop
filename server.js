@@ -20,7 +20,7 @@ app.get('/store', function(req, res) {
       res.status(500).end()
     } else {
       res.render('store.ejs', {
-        stripePublicKey: stripePublicKey,
+        stripePublicKey: stripePublicKey, // get and use your public key for stripe transaction 
         items: JSON.parse(data)
       })
     }
@@ -41,15 +41,18 @@ app.post('/purchase', function(req, res) {
         })
         total = total + itemJson.price * item.quantity
       })
-
+      
+      // create charge like below 
       stripe.charges.create({
         amount: total,
-        source: req.body.stripeTokenId,
+        source: req.body.stripeTokenId, // <-- ID that gets charged 
         currency: 'usd'
       }).then(function() {
+        // when success 
         console.log('Charge Successful')
         res.json({ message: 'Successfully purchased items' })
       }).catch(function() {
+        // when unsuccessful 
         console.log('Charge Fail')
         res.status(500).end()
       })
